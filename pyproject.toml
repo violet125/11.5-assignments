@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "leasing-agent"
+version = "1.0.0"
+description = "招商需求与空间匹配 Agent：需求结构化、载体台账、交接校验与复核闭环"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+dependencies = []
+
+[project.scripts]
+leasing-agent = "leasing_agent.main:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+leasing_agent = ["py.typed"]

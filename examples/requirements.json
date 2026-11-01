@@ -1,0 +1,63 @@
+{
+  "title": "设备研发厂房需求（虚构样例）",
+  "customer": "某设备公司",
+  "purpose": "研发办公",
+  "items": [
+    {
+      "field": "area",
+      "state": "specified",
+      "value": 600,
+      "unit": "㎡",
+      "evidence": "面积至少600平方米",
+      "origin": "rule"
+    },
+    {
+      "field": "rent",
+      "state": "specified",
+      "value": 50,
+      "unit": "元/㎡/月",
+      "evidence": "租金不超过50元/㎡/月",
+      "origin": "rule"
+    },
+    {
+      "field": "power",
+      "state": "specified",
+      "value": 160,
+      "unit": "kVA",
+      "evidence": "供电容量不低于160kVA",
+      "origin": "rule"
+    },
+    {
+      "field": "load",
+      "state": "specified",
+      "value": 500,
+      "unit": "kg/㎡",
+      "evidence": "承重不低于500kg/㎡",
+      "origin": "rule"
+    },
+    {
+      "field": "height",
+      "state": "specified",
+      "value": 4,
+      "unit": "米",
+      "evidence": "净高不低于4米",
+      "origin": "rule"
+    },
+    {
+      "field": "layer_height",
+      "state": "specified",
+      "value": 5,
+      "unit": "米",
+      "evidence": "层高5米",
+      "origin": "rule"
+    },
+    {
+      "field": "redundancy",
+      "state": "not_requested",
+      "value": null,
+      "unit": "",
+      "evidence": "",
+      "origin": "rule"
+    }
+  ]
+}

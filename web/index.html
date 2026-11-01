@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>招商需求 · 交接与空间匹配工作台</title>
+<link rel="stylesheet" href="/assets/styles.css">
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <strong>招商需求 · 空间匹配工作台</strong>
+    <span class="badge">MVP</span>
+  </div>
+  <div class="topbar-right">
+    <label class="role-picker">
+      当前角色
+      <select id="actorRole" aria-label="当前角色">
+        <option value="business">业务（招商）</option>
+        <option value="engineer">工程</option>
+        <option value="reviewer">复核</option>
+        <option value="admin">管理员</option>
+      </select>
+    </label>
+    <label class="role-picker">
+      操作人
+      <input id="actorName" type="text" placeholder="姓名" maxlength="24">
+    </label>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="sidebar">
+    <div class="side-card">
+      <p class="side-head">流程导航</p>
+      <div class="nav-group">
+        <p class="nav-title">需求侧</p>
+        <button class="nav-item active" data-panel="card"><span class="no">01</span>需求卡</button>
+        <button class="nav-item" data-panel="extract"><span class="no">02</span>访谈抽取</button>
+        <button class="nav-item" data-panel="fields"><span class="no">03</span>字段裁定</button>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">交接协作</p>
+        <button class="nav-item" data-panel="handover"><span class="no">04</span>交接校验与复核</button>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">房源与报价</p>
+        <button class="nav-item" data-panel="spaces"><span class="no">05</span>载体参数台账</button>
+        <button class="nav-item" data-panel="match"><span class="no">06</span>空间匹配与报价</button>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">审计与指标</p>
+        <button class="nav-item" data-panel="audit"><span class="no">07</span>审计留痕</button>
+      </div>
+    </div>
+    <p class="side-tip">按分类进入环节，一次只显示一个面板。</p>
+  </aside>
+
+  <section class="content">
+    <p id="mode" class="mode" role="status"></p>
+    <p id="message" class="message" role="alert" hidden></p>
+    <div id="ctxBar" class="ctxbar"></div>
+
+    <section class="panel active" id="panel-card">
+    <h2>01 / 需求卡</h2>
+    <p class="hint">需求卡是流程主线。选定客户用途后，系统才知道哪些字段必填、哪些需要工程或复核确认。</p>
+    <div class="grid-4">
+      <label>标题<input id="cardTitle" type="text" placeholder="如：设备研发厂房需求" maxlength="60"></label>
+      <label>客户名称<input id="cardCustomer" type="text" placeholder="如：某设备公司" maxlength="60"></label>
+      <label>客户用途
+        <select id="cardPurpose"><option value="">请选择用途</option></select>
+      </label>
+      <label>状态<span id="cardStatus" class="status-pill">—</span></label>
+    </div>
+    <div class="row">
+      <button id="createCard" class="primary">新建需求卡</button>
+      <button id="saveCard">保存修改</button>
+      <button id="reloadCard" class="ghost">重新载入</button>
+    </div>
+    <div class="row cardlist-tools">
+      <input id="cardSearch" type="search" placeholder="搜索标题或客户" maxlength="60">
+      <select id="cardStatusFilter" aria-label="按状态筛选">
+        <option value="">全部状态</option>
+        <option value="draft">草稿</option>
+        <option value="pending">待交接</option>
+        <option value="handover">已交接</option>
+        <option value="returned">已退回</option>
+        <option value="escalated">已升级</option>
+      </select>
+      <button id="cardSearchBtn" class="ghost">查询</button>
+      <span id="cardPageInfo" class="muted"></span>
+      <span class="spacer"></span>
+      <button id="cardPrevPage" class="ghost" disabled>上一页</button>
+      <button id="cardNextPage" class="ghost" disabled>下一页</button>
+    </div>
+    <div class="cardlist-wrap">
+      <table class="cardlist" id="cardList">
+        <thead><tr><th>标题</th><th>客户</th><th>用途</th><th>状态</th><th>版本</th><th>更新时间</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-extract">
+    <h2>02 / 访谈抽取</h2>
+    <p class="hint">粘贴访谈记录，尽量保留客户原话、数值和单位。发送到模型前系统会自动脱敏。</p>
+    <textarea id="source" aria-label="客户访谈" placeholder="粘贴访谈记录…"></textarea>
+    <div class="row">
+      <button id="sample" class="ghost">填入演示访谈</button>
+      <button id="extract" class="primary">提取需求</button>
+    </div>
+    <p class="hint" id="extractHint"></p>
+  </section>
+
+  <section class="panel" id="panel-fields">
+    <h2>03 / 字段裁定</h2>
+    <p class="hint">
+      每项都要给出明确状态。<strong>"未提出要求"</strong>与<strong>"确认无此要求"</strong>不同：前者是本次访谈没聊到，
+      后者是客户明确说过不需要。空值无法表达这两种差异，必须人工裁定。
+    </p>
+    <div id="fields" class="grid-3"></div>
+    <div class="row">
+      <button id="saveFields" class="primary">保存字段</button>
+      <button id="validateNow">跑一次交接校验</button>
+    </div>
+    <div id="fieldSummary" class="summary"></div>
+  </section>
+
+  <section class="panel" id="panel-handover">
+    <h2>04 / 交接校验与复核</h2>
+    <div class="row">
+      <button id="submitHandover" class="primary">提交交接</button>
+      <button id="completeHandover" class="ghost">标记交接完成</button>
+      <button id="exportAudit">导出留痕报告</button>
+    </div>
+    <div id="validation" class="validation"><p class="muted">尚未校验。提交交接前建议先跑一次校验。</p></div>
+    <div id="reviewPanel" class="review-panel">
+      <h3>复核动作</h3>
+      <div class="row">
+        <select id="reviewAction" aria-label="复核动作">
+          <option value="accept">接受</option>
+          <option value="change_level">修改等级</option>
+          <option value="change_explanation">修改解释</option>
+          <option value="reject">驳回</option>
+          <option value="escalate">升级</option>
+        </select>
+        <select id="reviewField" aria-label="涉及字段"></select>
+        <select id="reviewReasonCode" aria-label="退回原因代码" hidden></select>
+        <input id="reviewReason" type="text" placeholder="理由（必填，除接受外）" maxlength="200">
+        <input id="reviewExtra" type="text" placeholder="附加信息（等级/解释/升级对象）" maxlength="200">
+        <button id="doReview">执行</button>
+      </div>
+      <p class="hint">驳回时必须从下拉中选择退回原因代码（枚举），理由文本作为附注留痕。</p>
+      <div id="reviewHistory"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-spaces">
+    <h2>05 / 载体参数台账</h2>
+    <p class="hint">
+      台账需要溯源信息：资料来源、核实人、核实日期、数据版本。溯源不完整的房源不会被判为"满足"。
+      <a href="/api/spaces/template" download="房源台账模板.json">下载模板</a>
+    </p>
+    <div class="row">
+      <label class="filelabel">导入台账 JSON<input id="upload" type="file" accept=".json,application/json"></label>
+      <button id="reloadSpaces" class="ghost">重新载入</button>
+    </div>
+    <div id="inventory" class="summary"></div>
+    <div id="spaceTableWrap"></div>
+  </section>
+
+  <section class="panel" id="panel-match">
+    <h2>06 / 空间匹配与报价</h2>
+    <p class="hint">"已填条件满足"仅表示已录入的数值条件通过，不能代替行业准入、消防或工程验收。匹配通过的房源可生成报价单草稿。</p>
+    <div class="row">
+      <button id="match" class="primary">开始空间匹配</button>
+      <button id="export" class="ghost" disabled>导出需求与匹配报告 JSON</button>
+      <button id="exportMd" class="ghost" disabled>导出 Markdown 报告</button>
+    </div>
+    <div id="results"><p class="muted">完成字段裁定后开始匹配。</p></div>
+    <div id="quoteSection">
+      <h3>报价单</h3>
+      <p class="hint">
+        只有"已填条件满足"或"条件满足但溯源不全"的房源可以生成报价单草稿。台账未登记租金或面积时需人工填写条款。
+        三年总占用成本 = 三年租金（含递增）+ 三年物业费 + 装修投入 − 补贴，行业参照，需园区确认。
+        免租超 92 天或折扣超 5% 须管理员授权审批后才能发出。
+      </p>
+      <div id="quoteList"><p class="muted">暂无报价单。</p></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-audit">
+    <h2>07 / 审计留痕</h2>
+    <p class="hint">每条操作记录操作者、角色、时间、理由与引用版本。这是独立留痕，不是报告导出。</p>
+    <div class="row">
+      <button id="reloadAudit" class="ghost">刷新留痕</button>
+      <button id="showMetrics" class="ghost">查看过程指标</button>
+    </div>
+    <div id="auditTableWrap"></div>
+    <div id="metricsBox"></div>
+  </section>
+  </section>
+</main>
+
+<!-- 智能助手：悬浮球 + 右侧抽屉 -->
+<button id="assistantFab" class="assistant-fab" title="智能助手" aria-label="打开智能助手">
+  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+    <path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3.5V6a1 1 0 0 1 1-1z"
+          fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <circle cx="9" cy="10.5" r="1.1" fill="currentColor"/>
+    <circle cx="13" cy="10.5" r="1.1" fill="currentColor"/>
+    <circle cx="17" cy="10.5" r="1.1" fill="currentColor"/>
+  </svg>
+  <span>智能助手</span>
+</button>
+
+<section id="assistantPanel" class="assistant-panel" hidden aria-label="智能助手">
+  <header class="assistant-head">
+    <div class="assistant-title">
+      <h3>智能助手</h3>
+      <span id="assistantMode" class="assistant-mode"></span>
+    </div>
+    <button id="assistantClose" class="ghost assistant-close" title="收起">收起</button>
+  </header>
+  <div id="assistantMessages" class="assistant-messages"></div>
+  <div class="assistant-quick" id="assistantQuick">
+    <button type="button" data-q="生成补问清单">生成补问清单</button>
+    <button type="button" data-q="总结当前需求卡">总结需求卡</button>
+    <button type="button" data-q="报价口径说明">报价口径</button>
+    <button type="button" data-q="字段口径说明">字段口径</button>
+    <button type="button" data-q="匹配结论说明">匹配结论</button>
+  </div>
+  <form id="assistantForm" class="assistant-input">
+    <input id="assistantText" type="text" placeholder="输入问题，例如：帮我生成补问清单" autocomplete="off">
+    <button type="submit">发送</button>
+  </form>
+</section>
+
+<script src="/assets/app.js"></script>
+</body>
+</html>

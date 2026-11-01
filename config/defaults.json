@@ -1,0 +1,127 @@
+{
+  "version": "1.0",
+  "note": "非机密配置。用途规则用于交接校验：required 必填、conditional 条件必填、professional 需专业确认、questions 补问模板。",
+  "purposes": {
+    "通用": {
+      "description": "未明确用途时的兜底规则",
+      "required": ["area", "rent"],
+      "conditional": {},
+      "professional": [],
+      "questions": [
+        "客户实际经营业态与主要作业内容是什么？",
+        "预计入驻时间与工期要求是什么？"
+      ]
+    },
+    "研发办公": {
+      "description": "研发、测试、办公类用房",
+      "required": ["area", "rent", "power", "height"],
+      "conditional": {
+        "load": "存在机柜、实验设备或重型设备时必填",
+        "redundancy": "涉及连续生产或关键负载时必填"
+      },
+      "professional": ["height", "load"],
+      "questions": [
+        "是否需要 7×24 小时空调或独立温控？",
+        "是否有防静电、UPS 或独立配电间要求？",
+        "是否需要保留现有装修或特殊隔断？"
+      ]
+    },
+    "仓储物流": {
+      "description": "仓储、配送中心类用房",
+      "required": ["area", "rent", "power", "load", "height"],
+      "conditional": {
+        "redundancy": "冷链或自动化设备连续运行时必填"
+      },
+      "professional": ["load", "height"],
+      "questions": [
+        "叉车、货架与货物最大重量分别是多少？",
+        "是否需要月台、装卸平台或卸货口？",
+        "是否需要防潮、保温或消防喷淋改造？"
+      ]
+    },
+    "生产制造": {
+      "description": "生产车间类用房",
+      "required": ["area", "rent", "power", "load", "height", "layer_height", "redundancy"],
+      "conditional": {},
+      "professional": ["power", "load", "height", "layer_height", "redundancy"],
+      "questions": [
+        "产线设备总功率与启动电流如何？",
+        "是否需要行车、吊装或地沟条件？",
+        "是否涉及废水、废气或特殊环保审批？"
+      ]
+    },
+    "数据中心": {
+      "description": "数据中心、机房类用房",
+      "required": ["area", "rent", "power", "redundancy", "height"],
+      "conditional": {
+        "load": "机柜密度较高时必填"
+      },
+      "professional": ["power", "redundancy", "height"],
+      "questions": [
+        "机柜数量、单机柜功率与上架率是多少？",
+        "U 位高度、通道宽度与地板承重要求是什么？",
+        "是否需要双路市电、UPS 后备与柴发接口？"
+      ]
+    }
+  },
+  "manual_checks": [
+    "行业准入与消防条件",
+    "计划入驻日期及实际交付时间",
+    "面积上限、楼层、位置偏好",
+    "层高与净高口径、设备基础及荷载校核",
+    "参数来源、核实日期和工程负责人确认"
+  ],
+  "quotation": {
+    "deposit_months": 3,
+    "free_rent_days": 30,
+    "lease_term_months": 36,
+    "escalation_pct": 0,
+    "validity_days": 15,
+    "note": "口径：租金为元/㎡/月，计租面积 = 登记面积 × 得房率（缺得房率按 100%）。报价单是草稿素材，对外发出前需业务与审批确认；装修/物业等估算为行业参照，需园区确认。",
+    "bounds": {
+      "deposit_months": [0, 12],
+      "free_rent_days": [0, 365],
+      "lease_term_months": [1, 120],
+      "escalation_pct": [0, 50],
+      "validity_days": [1, 180]
+    },
+    "authority": {
+      "max_free_rent_days": 92,
+      "max_discount_pct": 5,
+      "note": "免租超 92 天或单价折扣超 5% 时，报价单不能直接发出，须管理员先授权审批（POST /api/quote/approve）。"
+    },
+    "renovation_cost_per_sqm": {
+      "L1": [300, 600],
+      "L2": [100, 300],
+      "L3": [0, 30],
+      "毛坯": [300, 800],
+      "note": "装修投入参照区间（元/㎡），估算取中值；行业参照，需园区确认。"
+    }
+  },
+  "roles": {
+    "business": {
+      "label": "业务（招商）",
+      "can": ["card.create", "card.edit", "card.submit", "space.import", "match.run", "quote.create", "report.export"],
+      "cannot_clear_professional": true
+    },
+    "engineer": {
+      "label": "工程",
+      "can": ["card.view", "card.edit", "card.confirm_professional", "card.comment",
+              "space.import", "space.verify", "match.run", "report.export"],
+      "cannot_clear_professional": false
+    },
+    "reviewer": {
+      "label": "复核",
+      "can": ["card.edit", "card.submit", "card.review", "card.confirm_professional", "space.import", "space.verify", "match.run", "report.export"],
+      "cannot_clear_professional": false
+    },
+    "admin": {
+      "label": "管理员",
+      "can": ["*"],
+      "cannot_clear_professional": false
+    }
+  },
+  "redaction": {
+    "masked_for_business": ["customer_contact", "customer_credit_code", "customer_legal_rep"]
+  }
+}

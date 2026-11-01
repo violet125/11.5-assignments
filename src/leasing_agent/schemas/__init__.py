@@ -1,0 +1,28 @@
+"""字段规格与取值状态模型。"""
+
+from .fields import (  # noqa: F401
+    ALL_STATES,
+    BLANK_STATES,
+    FIELDS,
+    FIELD_KEYS,
+    STATE_LABELS,
+    STATE_NONE_CONFIRMED,
+    STATE_NOT_REQUESTED,
+    STATE_SPECIFIED,
+    STATE_UNKNOWN,
+    FieldError,
+    FieldSpec,
+    blank_item,
+    compare,
+    compare_label,
+    ensure_all_fields,
+    is_number_field,
+    label_of,
+    normalize_item,
+    normalize_items,
+    parse_number,
+    parse_value,
+    spec,
+    specified_items,
+    unit_of,
+)
